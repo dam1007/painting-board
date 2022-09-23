@@ -2,8 +2,10 @@ const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = 800;
 canvas.height = 800;
+ctx.lineWidth = 2;
 
-const colors = [
+// 1. 클릭으로 선 그리기
+/* const colors = [
     '#55efc4',
     '#81ecec',
     '#74b9ff',
@@ -28,4 +30,30 @@ function onClick(e) {
     ctx.beginPath();
 }
 
-canvas.addEventListener('click', onClick);
+canvas.addEventListener('click', onClick); */
+
+
+// 2. 클릭한 채로 움직일 때 선 그리기
+let isPainting = false;
+
+function onMove(e) {
+    if(isPainting) {
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+        return;
+    }
+    ctx.moveTo(e.offsetX, e.offsetY);
+}
+
+function startPainting(e) {
+    isPainting = true;
+}
+
+function cancelPainting(e) {
+    isPainting = false;
+}
+
+canvas.addEventListener('mousemove', onMove);
+canvas.addEventListener('mousedown', startPainting);
+canvas.addEventListener('mouseup', cancelPainting);
+canvas.addEventListener('mouseleave', cancelPainting);
