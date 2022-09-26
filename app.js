@@ -1,10 +1,18 @@
+const modeBtn = document.getElementById('mode-btn');
+const destroyBtn = document.getElementById('destroy-btn');
+const colorOptions = Array.from(document.getElementsByClassName('color-option'));
+const lineWidth = document.getElementById('line-width');
+const lineColor = document.getElementById('line-color');
+const rangeDisplay = document.getElementsByClassName('range-display');
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = 800;
 canvas.height = 800;
 ctx.lineWidth = 2;
+let isPainting = false;
+let isFilling = false;
 
-// 1. 클릭으로 선 그리기
+// 1. 클릭으로 색이 변화하는 선 그리기
 /* const colors = [
     '#55efc4',
     '#81ecec',
@@ -20,21 +28,20 @@ ctx.lineWidth = 2;
     '#ffeaa7'
 ];
 
-function onClick(e) {
+function onDrawing(e) {
     const color = colors[Math.floor(Math.random() * colors.length)];
 
-    ctx.strokeStyle = color;
     ctx.moveTo(0,0);
     ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.strokeStyle = color;
     ctx.stroke();
     ctx.beginPath();
 }
 
-canvas.addEventListener('click', onClick); */
+canvas.addEventListener('click', onDrawing); */
 
 
 // 2. 클릭한 채로 움직일 때 선 그리기
-let isPainting = false;
 
 function onMove(e) {
     if(isPainting) {
@@ -49,11 +56,66 @@ function startPainting(e) {
     isPainting = true;
 }
 
-function cancelPainting(e) {
+function stopPainting(e) {
     isPainting = false;
+    ctx.beginPath();
 }
 
 canvas.addEventListener('mousemove', onMove);
 canvas.addEventListener('mousedown', startPainting);
-canvas.addEventListener('mouseup', cancelPainting);
-canvas.addEventListener('mouseleave', cancelPainting);
+canvas.addEventListener('mouseup', stopPainting);
+canvas.addEventListener('mouseleave', stopPainting);
+
+
+// 3. input type="range"로 선 두께 조절하기
+function onChangeWidth(e) {
+    ctx.lineWidth = e.target.value;
+}
+
+lineWidth.addEventListener('input', onChangeWidth);
+
+
+// 4. input type="color"로 선 색 조절하기
+function onChangeColor(e) {
+    ctx.strokeStyle = e.target.value;
+    ctx.fillStyle = e.target.value;
+}
+
+lineColor.addEventListener('input', onChangeColor);
+
+
+// 5. 컬러팔레트로 선 색 주기 
+function onColorClick(event) {
+    const colorValue = event.target.dataset.color;;
+    ctx.strokeStyle = colorValue;
+    ctx.fillStyle = colorValue;
+
+    //컬러팔레트 클릭 시, input color도 같은 색 적용
+    lineColor.value = colorValue;
+}
+colorOptions.forEach(color => color.addEventListener('click', onColorClick));
+
+
+// 6. 색 채우기 버튼 만들기
+function onModeClick() {
+    if(isFilling) {
+        isFilling = false;
+        modeBtn.innerText = 'Fill';
+    } else {
+        isFilling = true;
+        modeBtn.innerText = 'Draw';
+    }
+}
+
+function onCanvasClick() {
+    if(isFilling) {
+        ctx.fillRect(0, 0, 800, 800);
+    }
+}
+
+modeBtn.addEventListener('click', onModeClick);
+canvas.addEventListener('click', onCanvasClick);
+
+
+// 7. 리셋 버튼
+

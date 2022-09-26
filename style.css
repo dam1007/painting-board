@@ -9,3 +9,8 @@ body {
     justify-content: center;
     align-items: center;
 }
+
+.color-option {
+    height: 50px;
+    width: 50px;
+}
