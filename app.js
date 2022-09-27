@@ -1,13 +1,16 @@
 const modeBtn = document.getElementById('mode-btn');
-const destroyBtn = document.getElementById('destroy-btn');
+const resetBtn = document.getElementById('reset-btn');
+const eraseBtn = document.getElementById('erase-btn');
 const colorOptions = Array.from(document.getElementsByClassName('color-option'));
 const lineWidth = document.getElementById('line-width');
 const lineColor = document.getElementById('line-color');
 const rangeDisplay = document.getElementsByClassName('range-display');
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
-canvas.width = 800;
-canvas.height = 800;
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 800;
+canvas.width = CANVAS_WIDTH;
+canvas.height = CANVAS_HEIGHT;
 ctx.lineWidth = 2;
 let isPainting = false;
 let isFilling = false;
@@ -103,13 +106,13 @@ function onModeClick() {
         modeBtn.innerText = 'Fill';
     } else {
         isFilling = true;
-        modeBtn.innerText = 'Draw';
+        modeBtn.innerText = 'Stroke';
     }
 }
 
 function onCanvasClick() {
     if(isFilling) {
-        ctx.fillRect(0, 0, 800, 800);
+        ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     }
 }
 
@@ -117,5 +120,20 @@ modeBtn.addEventListener('click', onModeClick);
 canvas.addEventListener('click', onCanvasClick);
 
 
-// 7. 리셋 버튼
+// 7. 리셋 버튼 만들기 = 흰색으로 캔버스 전체를 칠하는 것
+function onResetClick() {
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+}
 
+resetBtn.addEventListener('click', onResetClick);
+
+
+// 8. 지우기 버튼 만들기 = 흰색으로 그리는 것
+function onEraseClick() {
+    ctx.strokeStyle = 'white';
+    isFilling = false;
+    modeBtn.innerText = 'Fill';
+}
+
+eraseBtn.addEventListener('click', onEraseClick);
